@@ -79,62 +79,64 @@
 
     - **Usuarios:** Se almacenará un array de objetos, donde cada objeto representará a un usuario. Cada objeto tendrá propiedades como nombre, apellido, correo (opcional) y whatsapp. Además, se incluirán propiedades para las etiquetas de seguimiento y curso, que se podrán editar. También se podría incluir un id único para facilitar la identificación y manipulación de cada usuario. La estructura podría ser similar a:
 
-    json
-    [
-        {
-            "id": "12345",
-            "nombre": "Juan",
-            "apellido": "Pérez",
-            "correo": "juan.perez@email.com",
-            "whatsapp": "+525512345678",
-            "etiqueta_seguimiento": "nuevo",
-            "etiqueta_curso": "interesado"
-        },
-         {
-            "id": "67890",
-            "nombre": "Maria",
-            "apellido": "Gomez",
-            "correo": "maria.gomez@email.com",
-            "whatsapp": "+525587654321",
-            "etiqueta_seguimiento": "contactado",
-            "etiqueta_curso": "inscrito"
-        }
-    ]
+        ```
+        [
+            {
+                "id": "12345",
+                "nombre": "Juan",
+                "apellido": "Pérez",
+                "correo": "juan.perez@email.com",
+                "whatsapp": "+525512345678",
+                "etiqueta_seguimiento": "nuevo",
+                "etiqueta_curso": "interesado"
+            },
+            {
+                "id": "67890",
+                "nombre": "Maria",
+                "apellido": "Gomez",
+                "correo": "maria.gomez@email.com",
+                "whatsapp": "+525587654321",
+                "etiqueta_seguimiento": "contactado",
+                "etiqueta_curso": "inscrito"
+            }
+        ]
+        ```
     
     - **Plantillas de Mensajes:** Similarmente, se usará un array de objetos para almacenar las plantillas de mensajes. Cada objeto representará una plantilla y contendrá, al menos, el texto del mensaje. Se podría incluir un id para identificar cada plantilla, y otras propiedades como el tipo de plantilla (bienvenida, seguimiento, cierre) o la fecha de creación.  La estructura podría verse así:
 
-    json
-    [
-        {
-            "id": "plantilla1",
-            "tipo": "bienvenida",
-            "texto": "Hola, bienvenido a Repensar. ¿En qué programa estás interesado?"
-        },
-         {
-            "id": "plantilla2",
-            "tipo": "seguimiento",
-            "texto": "Hola, ¿tienes alguna duda adicional sobre nuestros programas?"
-        }
-    ]
+        ```
+        [
+            {
+                "id": "plantilla1",
+                "tipo": "bienvenida",
+                "texto": "Hola, bienvenido a Repensar. ¿En qué programa estás interesado?"
+            },
+            {
+                "id": "plantilla2",
+                "tipo": "seguimiento",
+                "texto": "Hola, ¿tienes alguna duda adicional sobre nuestros programas?"
+            }
+        ]
+        ```
     
     - **Mensajes Enviados a Usuarios:** Se almacenará la relación entre los usuarios y las plantillas enviadas, junto con la fecha y hora del envío. Cada objeto contendrá, al menos, el id del usuario, el id de la plantilla utilizada y la URL generada. Además, se registrará la fecha y hora del envío para análisis posterior. La estructura podría ser la siguiente:
 
-    json
-     [
-        {
-            "usuario_id": "12345",
-            "plantilla_id": "plantilla1",
-             "url": "https://wa.me/525512345678?text=Hola,%20bienvenido%20a%20Repensar.%20%C2%BFEn%20qu%C3%A9%20programa%20est%C3%A1s%20interesado?",
-            "fecha_envio": "2024-02-29T10:00:00Z"
-        },
-         {
-           "usuario_id": "67890",
-            "plantilla_id": "plantilla2",
-             "url": "https://wa.me/525587654321?text=Hola,%20%C2%BFtienes%20alguna%20duda%20adicional%20sobre%20nuestros%20programas?",
-            "fecha_envio": "2024-02-29T11:30:00Z"
-        }
-    ]
-    
+        ```
+        [
+            {
+                "usuario_id": "12345",
+                "plantilla_id": "plantilla1",
+                "url": "https://wa.me/525512345678?text=Hola,%20bienvenido%20a%20Repensar.%20%C2%BFEn%20qu%C3%A9%20programa%20est%C3%A1s%20interesado?",
+                "fecha_envio": "2024-02-29T10:00:00Z"
+            },
+            {
+                "usuario_id": "67890",
+                "plantilla_id": "plantilla2",
+                "url": "https://wa.me/525587654321?text=Hola,%20%C2%BFtienes%20alguna%20duda%20adicional%20sobre%20nuestros%20programas?",
+                "fecha_envio": "2024-02-29T11:30:00Z"
+            }
+        ]
+        ```
 
     - **Métricas:** Además de las estructuras de datos principales, se necesitará una estructura para almacenar las métricas, aunque no se especifica su forma exacta en los documentos. Podría ser un objeto que almacene contadores para el número de mensajes enviados, tiempo de respuesta promedio, etc.
 
