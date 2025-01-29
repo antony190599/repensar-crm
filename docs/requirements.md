@@ -64,22 +64,86 @@ El sistema busca optimizar el flujo de gestión de leads mediante la creación d
 
 - Mostrar un listado de plantillas de mensajes.
 
-- leccionar un usuario y generar un enlace para enviar mensajes basado en una plantilla.
+- Seleccionar un usuario y generar un link para enviar mensajes basado en una plantilla.
 
-- Almacenar los mensajes enviados (enlaces generados) en una tabla que relacione el usuario y la plantilla utilizada, incluyendo fecha y hora.
+- Almacenar los mensajes enviados (links generados) en otra tabla incluyendo la asociacion entre el numero de usuario y la    plantilla utilizada.
 
-- Editar usuarios, incluyendo la capacidad de agregar etiquetas de seguimiento.
+- Agregar una etiqueta a cada ususario para indicar su estado de seguimiento.
 
-- Agregar iteraciones (notas o actualizaciones) a los usuarios.
+- Agregar una etiqueta a cada usuario para indicar el curso al que esta asociado.
+
+- Mostrar un dashboard con toda la información estadística, incluyendo las métricas especificadas en el documento.
+
+- **Además, las funcionalidades incluyen:**
+- Tener una tabla de usuarios con nombre, apellido, correo (opcional) y WhatsApp.
+
+- Poder cargar usuarios por lotes desde un archivo CSV.
+
+- Abrir WhatsApp al darle clic a un usuario.
+
+- Configurar una plantilla de mensaje predeterminado al redirigir a WhatsApp o crear una lista de plantillas adaptadas a diferentes etapas del embudo.
+
+- Registro automático de mensajes enviados para seguimiento posterior.
+
+- Tener una página de estadísticas de mensajes enviados.
+
+- Poder etiquetar a los usuarios según las diferentes etapas del embudo y según los diferentes cursos.
 
 ### Restricciones Técnicas
-- Uso exclusivo de `localStorage` para almacenamiento de datos.
-- Acceso al sistema desde navegadores compatibles con WhatsApp Web.
+- Almacenamiento de datos: Se debe utilizar local storage para guardar la información en el navegador.
+
+- Estructura de datos: Es necesario definir una estructura de datos para almacenar usuarios, plantillas, y la relación entre usuarios y plantillas enviadas. Esto incluye arrays o listas para organizar la información.
+
+- Carga de datos: Se requiere una funcionalidad para cargar usuarios masivamente desde un archivo CSV, lo que implica la necesidad de procesar y parsear el archivo.
+
+- Generación de URLs: La funcionalidad de enviar mensajes implica la generación de URLs para compartir con los usuarios.
+
+- Manejo de etiquetas: Se necesita una funcionalidad para agregar y actualizar etiquetas a los usuarios.
+
+- Interfaz: Se deben crear tres secciones principales en la interfaz: usuarios, plantillas y dashboard.
+
+- Compatibilidad: La solución debe ser compatible tanto con Whatsapp web (escritorio) como con Whatsapp para celular.
+
+- Manejo de mensajes predeterminados: El sistema debe permitir configurar y utilizar mensajes predeterminados, lo que implica una estructura para almacenar y seleccionar plantillas de mensajes.
+
+- Métricas: El sistema debe almacenar información sobre los mensajes enviados para poder calcular las métricas de desempeño solicitadas, como el tiempo de respuesta, la tasa de uso de mensajes predeterminados, la tasa de conversión de leads y la tasa de respuesta de leads.
 
 ### Entregables Mínimos
-- Dashboard funcional con las tres secciones principales.
-- Uso de `localStorage` para persistir datos entre sesiones.
-- Generación de URLs para WhatsApp basada en plantillas seleccionadas.
+- Estructura de datos definida: Se requiere una estructura de datos clara para almacenar la información de los usuarios, las plantillas de mensajes y la relación entre los usuarios y las plantillas enviadas. Esto incluye la necesidad de utilizar local storage en el navegador para guardar estos datos.
+
+- Funcionalidad para cargar usuarios: Debe existir una funcionalidad para cargar usuarios de forma masiva desde un archivo CSV e insertar esta información en el local storage.
+
+- Tabla de usuarios: Se necesita una tabla que muestre la información de los usuarios (nombre, apellido, correo opcional y WhatsApp).
+
+- Funcionalidad para abrir WhatsApp: Debe ser posible abrir una conversación de WhatsApp al hacer clic en un usuario.
+
+- Gestión de plantillas: Se requiere un formulario para crear plantillas de mensajes y una tabla para visualizarlas. Las plantillas deben poder ser adaptadas a diferentes etapas del embudo.
+
+- Generación de links: Debe ser posible generar un link para enviar un mensaje a un usuario, utilizando una plantilla seleccionada.
+
+- Almacenamiento de mensajes enviados: Los mensajes enviados (links generados) deben almacenarse en otra tabla, incluyendo la asociación entre el usuario y la plantilla utilizada. Esta información también debe incluir la fecha de envío.
+
+- Etiquetado de usuarios: Debe existir la funcionalidad para etiquetar a los usuarios según las diferentes etapas del embudo y según los diferentes cursos. Esto implica una acción en la tabla de usuarios que permita abrir un formulario para añadir o modificar la etiqueta.
+
+- Dashboard de métricas: Se necesita un dashboard que muestre información estadística de los mensajes enviados. **Este dashboard debe incluir las siguientes métricas:**
+
+- Tiempo de Respuesta Promedio (TTR)
+
+- Tiempo de Configuración de Mensajes Predeterminados
+
+- Tasa de Uso de Mensajes Predeterminados
+
+- Tasa de Conversión de Leads
+
+- Tasa de Respuesta de Leads
+
+- Interfaz de usuario: **La aplicación debe tener tres secciones principales:**
+
+- Usuarios
+
+- Plantillas
+
+- Dashboard
 
 ---
 
