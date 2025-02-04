@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Función para renderizar la tabla de usuarios
     function renderizarUsuarios() {
         const tbody = document.querySelector("#usuarios tbody");
-        tbody.innerHTML = ""; // Limpiar la tabla antes de renderizar
+        tbody.innerHTML = ""; 
         usuarios.forEach(usuario => {
             const row = document.createElement("tr");
             row.innerHTML = `
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Función para renderizar la tabla de plantillas
     function renderizarPlantillas() {
         const tbody = document.querySelector("#plantillas tbody");
-        tbody.innerHTML = ""; // Limpiar la tabla antes de renderizar
+        tbody.innerHTML = ""; 
         plantillas.forEach(plantilla => {
             const row = document.createElement("tr");
             row.innerHTML = `
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Función para renderizar la tabla de registros
     function renderizarRegistros() {
         const tbody = document.getElementById("registrosTableBody");
-        tbody.innerHTML = ""; // Limpiar la tabla antes de renderizar
+        tbody.innerHTML = ""; 
         registros.forEach(registro => {
             const row = document.createElement("tr");
             row.innerHTML = `
@@ -146,8 +146,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 usuario.curso = `Curso: ${document.getElementById("cursoEditar").value}`;
                 usuario.estado = `Estado: ${document.getElementById("estadoEditar").value}`;
                 guardarDatos();
-                renderizarUsuarios(); // Refrescar la tabla completa
-                bootstrap.Modal.getInstance(document.getElementById('editarModal')).hide(); // Cerrar modal
+                renderizarUsuarios(); 
+                bootstrap.Modal.getInstance(document.getElementById('editarModal')).hide(); 
             };
         }
     };
@@ -192,12 +192,12 @@ document.addEventListener('DOMContentLoaded', function() {
             // Configurar el botón "Enviar Mensaje"
             document.getElementById("enviarMensaje").onclick = function() {
                 const plantilla = document.getElementById("plantillaMensaje").value;
-                const numero = usuario.whatsapp; // Usar el número de WhatsApp del usuario
+                const numero = usuario.whatsapp; 
 
                 // Verificar que el número esté en formato internacional
-                let numeroFormateado = numero.trim(); // Eliminar espacios
+                let numeroFormateado = numero.trim(); 
                 if (!numeroFormateado.startsWith("+")) {
-                    numeroFormateado = `+51${numeroFormateado}`; // Asumimos que es de Perú (código +51)
+                    numeroFormateado = `+51${numeroFormateado}`;
                 }
 
                 // Codificar el mensaje
@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 plantilla.mensaje = document.getElementById("mensajePlantillaEditar").value;
                 guardarDatos();
                 renderizarPlantillas();
-                bootstrap.Modal.getInstance(document.getElementById('editarPlantillaModal')).hide(); // Cerrar modal
+                bootstrap.Modal.getInstance(document.getElementById('editarPlantillaModal')).hide(); 
             };
         }
     };
@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
             plantillas.push({ nombre, mensaje });
             guardarDatos();
             renderizarPlantillas();
-            bootstrap.Modal.getInstance(document.getElementById('crearPlantillaModal')).hide(); // Cerrar modal
+            bootstrap.Modal.getInstance(document.getElementById('crearPlantillaModal')).hide(); 
         } else {
             alert("Por favor, completa todos los campos.");
         }
