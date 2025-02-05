@@ -1,26 +1,24 @@
+function generateRandomIdentifier(prefix = "") {
+    return  `${prefix}_${Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)}`;
+    
+}
+
+
 document.addEventListener('DOMContentLoaded', function() {
     // Cargar datos desde localStorage o inicializar si no existen
-    let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [
-        {
-            nombre: "Frabousco",
-            apellido: "Gonzales",
-            whatsapp: "987654322",
-            correo: "fgonzales@gmail.com",
-            curso: "Curso: básico",
-            estado: "Estado: Terminado"
-        }
-    ];
+    let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
 
     let plantillas = JSON.parse(localStorage.getItem('plantillas')) || [
-        { nombre: "Bienvenida", mensaje: "Hola, gracias por contactarnos" },
-        { nombre: "Recordatorio", mensaje: "No olvides asistir a la reunión de mañana." },
-        { nombre: "Despedida", mensaje: "Te agradecemos tu compromiso con nosotros" }
+        { id: generateRandomIdentifier("temp"), nombre: "Bienvenida", mensaje: "Hola, gracias por contactarnos" },
+        { id: generateRandomIdentifier("temp"), nombre: "Recordatorio", mensaje: "No olvides asistir a la reunión de mañana." },
+        { id: generateRandomIdentifier("temp"), nombre: "Despedida", mensaje: "Te agradecemos tu compromiso con nosotros" }
     ];
 
     let registros = JSON.parse(localStorage.getItem('registros')) || [
-        { nombre: "Frabousco", nombrePlantilla: "Bienvenida", mensaje: "¡Hola! gracias por contactarnos" },
-        { nombre: "Frabousco", nombrePlantilla: "Recordatorio", mensaje: "No olvides asistir a la reunión de mañana." },
-        { nombre: "Frabousco", nombrePlantilla: "Despedida", mensaje: "Te agradecemos tu compromiso con nosotros" }
+        // Comentar para que no se muestren los registros por defecto
+        // { id: generateRandomIdentifier("req"), nombre: "Frabousco", nombrePlantilla: "Bienvenida", mensaje: "¡Hola! gracias por contactarnos" },
+        // { id: generateRandomIdentifier("req"),  nombre: "Frabousco", nombrePlantilla: "Recordatorio", mensaje: "No olvides asistir a la reunión de mañana." },
+        // { id: generateRandomIdentifier("req"), nombre: "Frabousco", nombrePlantilla: "Despedida", mensaje: "Te agradecemos tu compromiso con nosotros" }
     ];
 
     // Guardar datos en localStorage
@@ -55,6 +53,16 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderizarUsuarios() {
         const tbody = document.querySelector("#usuarios tbody");
         tbody.innerHTML = ""; 
+    
+        if (usuarios.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center">No hay datos</td>
+                </tr>
+            `;
+            return;
+        }
+    
         usuarios.forEach(usuario => {
             const row = document.createElement("tr");
             row.innerHTML = `
@@ -62,13 +70,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${usuario.apellido}</td>
                 <td>${usuario.whatsapp}</td>
                 <td>${usuario.correo}</td>
-                <td>${usuario.curso || "Curso: No especificado"}</td>
-                <td>${usuario.estado || "Estado: No especificado"}</td>
                 <td>
-                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editarModal" onclick="cargarDatosEditar('${usuario.nombre}')">Editar Etiqueta</button>
                     <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#crearModal">Crear Etiqueta</button>
-                    <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#enviarMensajeModal" onclick="cargarDatosEnviarMensaje('${usuario.nombre}')">Enviar Mensaje</button>
-                    <button class="btn btn-danger btn-sm" onclick="eliminarUsuario('${usuario.nombre}')">Eliminar</button>
+                    <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#enviarMensajeModal" onclick="cargarDatosEnviarMensaje('${usuario.id}')">Enviar Mensaje</button>
+                    <button class="btn btn-danger btn-sm" onclick="eliminarUsuario('${usuario.id}', '${usuario.nombre}')">Eliminar</button>
                 </td>
             `;
             tbody.appendChild(row);
@@ -79,14 +84,24 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderizarPlantillas() {
         const tbody = document.querySelector("#plantillas tbody");
         tbody.innerHTML = ""; 
+
+        if (plantillas.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="3" class="text-center">No hay datos</td>
+                </tr>
+            `;
+            return;
+        }
+
         plantillas.forEach(plantilla => {
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td>${plantilla.nombre}</td>
                 <td>${plantilla.mensaje}</td>
                 <td>
-                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editarPlantillaModal" onclick="cargarDatosEditarPlantilla('${plantilla.nombre}')">Editar</button>
-                    <button class="btn btn-danger btn-sm" onclick="eliminarPlantilla('${plantilla.nombre}')">Eliminar</button>
+                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editarPlantillaModal" onclick="cargarDatosEditarPlantilla('${plantilla.id}')">Editar</button>
+                    <button class="btn btn-danger btn-sm" onclick="eliminarPlantilla('${plantilla.id}', '${plantilla.nombre}')">Eliminar</button>
                 </td>
             `;
             tbody.appendChild(row);
@@ -97,12 +112,27 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderizarRegistros() {
         const tbody = document.getElementById("registrosTableBody");
         tbody.innerHTML = ""; 
+
+        if (registros.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center">No hay datos</td>
+                </tr>
+            `;
+            return;
+        }
+
         registros.forEach(registro => {
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td>${registro.nombre}</td>
                 <td>${registro.nombrePlantilla}</td>
                 <td>${registro.mensaje}</td>
+                <td>${registro.curso || "No especificado"}</td>
+                <td>${registro.estado || "No especificado"}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editarModal" onclick="cargarDatosEditarRegistro('${registro.id}')">Editar Etiqueta</button>
+                </td>
             `;
             tbody.appendChild(row);
         });
@@ -110,20 +140,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para actualizar las opciones de cursos y estados en los modales
     function actualizarOpciones() {
-        const cursoEditar = document.getElementById("cursoEditar");
+        const cursoMensaje = document.getElementById("cursoMensaje");
         const estadoEditar = document.getElementById("estadoEditar");
         const cursoCrear = document.getElementById("cursoCrear");
         const estadoCrear = document.getElementById("estadoCrear");
 
         // Limpiar opciones actuales
-        cursoEditar.innerHTML = "";
+        cursoMensaje.innerHTML = "";
         estadoEditar.innerHTML = "";
         cursoCrear.innerHTML = "";
         estadoCrear.innerHTML = "";
 
         // Agregar nuevas opciones
         cursosDisponibles.forEach(curso => {
-            cursoEditar.innerHTML += `<option value="${curso}">${curso}</option>`;
+            cursoMensaje.innerHTML += `<option value="${curso}">${curso}</option>`;
             cursoCrear.innerHTML += `<option value="${curso}">${curso}</option>`;
         });
 
@@ -134,32 +164,38 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Lógica para editar un usuario
-    window.cargarDatosEditar = function(nombre) {
-        const usuario = usuarios.find(u => u.nombre === nombre);
-        if (usuario) {
+    window.cargarDatosEditarRegistro = function(id) {
+        const registro = registros.find(r => r.id === id);
+        if (registro) {
             // Cargar valores actuales en el modal
-            document.getElementById("cursoEditar").value = usuario.curso.split(": ")[1];
-            document.getElementById("estadoEditar").value = usuario.estado.split(": ")[1];
-
+            document.getElementById("estadoEditar").value = registro.estado;
+    
             // Guardar cambios al hacer clic en "Guardar Cambios"
-            document.getElementById("guardarCambiosEditar").onclick = function() {
-                usuario.curso = `Curso: ${document.getElementById("cursoEditar").value}`;
-                usuario.estado = `Estado: ${document.getElementById("estadoEditar").value}`;
+            document.getElementById("guardarCambiosEditarRegistro").onclick = function() {
+                registro.estado = `${document.getElementById("estadoEditar").value}`;
                 guardarDatos();
-                renderizarUsuarios(); 
-                bootstrap.Modal.getInstance(document.getElementById('editarModal')).hide(); 
+                renderizarRegistros();
+                bootstrap.Modal.getInstance(document.getElementById('editarModal')).hide();
             };
         }
     };
 
     // Lógica para eliminar un usuario
-    window.eliminarUsuario = function(nombre) {
+    window.eliminarUsuario = function(id, nombre) {
         if (confirm(`¿Estás seguro de que deseas eliminar al usuario "${nombre}"?`)) {
-            usuarios = usuarios.filter(u => u.nombre !== nombre);
+            usuarios = usuarios.filter(u => u.id !== id);
             guardarDatos();
             renderizarUsuarios();
         }
     };
+
+    document.getElementById("borrarUsuarios").addEventListener("click", function() {
+        if (confirm("¿Estás seguro de que deseas eliminar todos los usuarios?")) {
+            usuarios = [];
+            guardarDatos();
+            renderizarUsuarios();
+        }
+    });
 
     // Lógica para crear una nueva etiqueta (curso o estado)
     document.getElementById("guardarCambiosCrear").addEventListener("click", function() {
@@ -181,33 +217,73 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Lógica para enviar mensaje
-    window.cargarDatosEnviarMensaje = function(nombre) {
-        const usuario = usuarios.find(u => u.nombre === nombre);
+    window.cargarDatosEnviarMensaje = function(id) {
+        const usuario = usuarios.find(u => u.id === id);
         if (usuario) {
             // Cargar las plantillas en el select del modal
             document.getElementById("plantillaMensaje").innerHTML = plantillas.map(p => `
-                <option value="${p.mensaje}">${p.nombre}</option>
+                <option value="${p.id}">${p.nombre}</option>
             `).join("");
-
+    
+            // Cargar los cursos disponibles en el select del modal
+            document.getElementById("cursoMensaje").innerHTML = cursosDisponibles.map(curso => `
+                <option value="${curso}">${curso}</option>
+            `).join("");
+    
             // Configurar el botón "Enviar Mensaje"
             document.getElementById("enviarMensaje").onclick = function() {
-                const plantilla = document.getElementById("plantillaMensaje").value;
-                const numero = usuario.whatsapp; 
-
+                const plantillaId = document.getElementById("plantillaMensaje").value;
+                const curso = document.getElementById("cursoMensaje").value;
+                const numero = usuario.whatsapp;
+    
+                // Actualizar el curso del usuario
+                usuario.curso = curso;
+                guardarDatos();
+    
                 // Verificar que el número esté en formato internacional
-                let numeroFormateado = numero.trim(); 
+                let numeroFormateado = numero.trim();
                 if (!numeroFormateado.startsWith("+")) {
                     numeroFormateado = `+51${numeroFormateado}`;
                 }
 
+                const plantillaSeleccionada = plantillas.find(p => p.id === plantillaId);
+    
                 // Codificar el mensaje
-                const mensajeCodificado = encodeURIComponent(plantilla);
-
+                const mensajeCodificado = encodeURIComponent(plantillaSeleccionada?.mensaje ?? "");
+    
                 // Crear el enlace de WhatsApp
                 const enlaceWhatsApp = `https://wa.me/${numeroFormateado}?text=${mensajeCodificado}`;
 
+                //verificar si el usuario ya tiene un registro con ese curso
+                const registroExistente = registros.find(r => r.curso === curso && r.usuarioId === usuario.id);
+
+                if (registroExistente) {
+                    alert("Ya existe un registro para este usuario con el curso seleccionado");
+                    return;
+                }
+
+                // Crear Registro
+                registros.push({ 
+                    id: generateRandomIdentifier("req"), 
+                    nombre: `${usuario.nombre} ${usuario.apellido}`,
+                    usuarioId: usuario.id,
+                    nombrePlantilla: plantillaSeleccionada?.nombre,
+                    mensaje: plantillaSeleccionada?.mensaje, 
+                    curso, 
+                    estado: "Inicio" 
+                });
+
+                guardarDatos();
+                renderizarRegistros();
+
+                //Redirect to Registro Page
+                document.querySelector('[data-section="registros"]').click();
+
                 // Abrir el enlace en una nueva pestaña
                 window.open(enlaceWhatsApp, '_blank');
+
+                //close modal
+                bootstrap.Modal.getInstance(document.getElementById('enviarMensajeModal')).hide();
             };
         }
     };
@@ -223,9 +299,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 header: true,
                 complete: function(results) {
                     usuarios = results.data.map(usuario => ({
+                        id: generateRandomIdentifier("user"),
                         ...usuario,
-                        curso: usuario.curso ? `Curso: ${usuario.curso}` : "Curso: No especificado",
-                        estado: usuario.estado ? `Estado: ${usuario.estado}` : "Estado: No especificado"
+                        curso: usuario.curso ? `${usuario.curso}` : "No especificado",
+                        estado: usuario.estado ? `${usuario.estado}` : "No especificado"
                     }));
                     guardarDatos();
                     renderizarUsuarios();
@@ -235,8 +312,8 @@ document.addEventListener('DOMContentLoaded', function() {
         input.click();
     });
 
-    window.cargarDatosEditarPlantilla = function (nombre) {
-        const plantilla = plantillas.find(p => p.nombre === nombre);
+    window.cargarDatosEditarPlantilla = function (id) {
+        const plantilla = plantillas.find(p => p.id === id);
         if (plantilla) {
             document.getElementById("nombrePlantillaEditar").value = plantilla.nombre;
             document.getElementById("mensajePlantillaEditar").value = plantilla.mensaje;
@@ -251,9 +328,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    window.eliminarPlantilla = function (nombre) {
+    window.eliminarPlantilla = function (id, nombre) {
         if (confirm(`¿Estás seguro de que deseas eliminar la plantilla "${nombre}"?`)) {
-            plantillas = plantillas.filter(p => p.nombre !== nombre);
+            plantillas = plantillas.filter(p => p.id !== id);
             guardarDatos();
             renderizarPlantillas();
         }
@@ -264,7 +341,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const mensaje = document.getElementById("mensajePlantilla").value;
 
         if (nombre && mensaje) {
-            plantillas.push({ nombre, mensaje });
+            plantillas.push({ id: generateRandomIdentifier("temp"), nombre, mensaje });
             guardarDatos();
             renderizarPlantillas();
             bootstrap.Modal.getInstance(document.getElementById('crearPlantillaModal')).hide(); 

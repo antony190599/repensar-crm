@@ -39,8 +39,12 @@
     <div class="container mt-4">
         <!-- Sección de Usuarios -->
         <div id="usuarios" class="section active">
-            <h2 class="mb-4">USERS</h2>
-            <button class="btn btn-primary mb-3" id="cargarUsuarios">Cargar Usuarios</button>
+            <h2 class="mb-4">Usuarios</h2>
+            <div class="mb-3 d-flex justify-content-between">
+                <button class="btn btn-primary mb-3" id="cargarUsuarios">Cargar Usuarios</button>
+                <button class="btn btn-danger mb-3" id="borrarUsuarios">Eliminar Usuarios</button>
+            </div>
+            
             <table class="table">
                 <thead>
                     <tr>
@@ -48,24 +52,12 @@
                         <th>Apellido</th>
                         <th>Whatsapp</th>
                         <th>Correo</th>
-                        <th>Curso</th>
-                        <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Frabousco</td>
-                        <td>Gonzales</td>
-                        <td>987654322</td>
-                        <td>fgonzales@gmail.com</td>
-                        <td>Curso: básico</td>
-                        <td>Estado: Terminado</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editarModal">Editar etiqueta</button>
-                            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#crearModal">Crear eti</button>
-                            <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#enviarMensajeModal">Enviar Mensaje</button>
-                        </td>
+                        <td colspan="5" class="text-center">No hay datos</td>
                     </tr>
                 </tbody>
             </table>
@@ -121,6 +113,9 @@
                         <th>Nombre</th>
                         <th>Nombre de la plantilla</th>
                         <th>Mensaje predefinido</th>
+                        <th>Curso</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="registrosTableBody">
@@ -136,25 +131,16 @@
         </div>
     </div>
 
-    <!-- Modales para Usuarios -->
+    
     <!-- Modal para Editar -->
     <div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editarModalLabel">Editar Usuario</h5>
+                    <h5 class="modal-title" id="editarModalLabel">Editar Registro</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="cursoEditar" class="form-label">Curso</label>
-                        <select class="form-select" id="cursoEditar">
-                            <option value="html">HTML</option>
-                            <option value="css">CSS</option>
-                            <option value="javascript">JavaScript</option>
-                            <option value="java">Java</option>
-                        </select>
-                    </div>
                     <div class="mb-3">
                         <label for="estadoEditar" class="form-label">Estado</label>
                         <select class="form-select" id="estadoEditar">
@@ -163,14 +149,10 @@
                             <option value="terminado">Terminado</option>
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label for="etiquetaEditar" class="form-label">Etiqueta</label>
-                        <input type="text" class="form-control" id="etiquetaEditar" placeholder="Asignar etiqueta">
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" id="guardarCambiosEditar">Guardar Cambios</button>
+                    <button type="button" class="btn btn-primary" id="guardarCambiosEditarRegistro">Guardar Cambios</button>
                 </div>
             </div>
         </div>
@@ -202,6 +184,7 @@
         </div>
     </div>
 
+    
     <!-- Modal para Enviar Mensaje -->
     <div class="modal fade" id="enviarMensajeModal" tabindex="-1" aria-labelledby="enviarMensajeModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -219,6 +202,15 @@
                             <option value="Despedida">Despedida</option>
                         </select>
                     </div>
+                    <div class="mb-3">
+                        <label for="cursoMensaje" class="form-label">Curso</label>
+                        <select class="form-select" id="cursoMensaje">
+                            <option value="HTML">HTML</option>
+                            <option value="CSS">CSS</option>
+                            <option value="JavaScript">JavaScript</option>
+                            <option value="Java">Java</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -228,7 +220,7 @@
         </div>
     </div>
 
-    <!-- Modales para Plantillas -->
+    
     <!-- Modal para Crear Plantilla -->
     <div class="modal fade" id="crearPlantillaModal" tabindex="-1" aria-labelledby="crearPlantillaModalLabel" aria-hidden="true">
         <div class="modal-dialog">
