@@ -69,3 +69,39 @@ body {
 .modal-footer {
     background-color: #f8f9fa;
 }
+
+
+/* Estilos para el modo oscuro */
+body.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+.dark-mode .navbar {
+    background-color: #1a1a1a;
+}
+
+.dark-mode .table {
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+.dark-mode .table th,
+.dark-mode .table td {
+    border-color: #333333;
+}
+
+.dark-mode .modal-content {
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+.dark-mode .btn-outline-light {
+    border-color: #ffffff;
+    color: #ffffff;
+}
+
+.dark-mode .btn-outline-light:hover {
+    background-color: #ffffff;
+    color: #000000;
+}

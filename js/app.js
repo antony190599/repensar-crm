@@ -1,32 +1,6 @@
-function generateRandomIdentifier(prefix = "") {
-    return  `${prefix}_${Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)}`;
-    
-}
-
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Cargar datos desde localStorage o inicializar si no existen
-    let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
 
-    let plantillas = JSON.parse(localStorage.getItem('plantillas')) || [
-        { id: generateRandomIdentifier("temp"), nombre: "Bienvenida", mensaje: "Hola, gracias por contactarnos" },
-        { id: generateRandomIdentifier("temp"), nombre: "Recordatorio", mensaje: "No olvides asistir a la reunión de mañana." },
-        { id: generateRandomIdentifier("temp"), nombre: "Despedida", mensaje: "Te agradecemos tu compromiso con nosotros" }
-    ];
-
-    let registros = JSON.parse(localStorage.getItem('registros')) || [
-        // Comentar para que no se muestren los registros por defecto
-        // { id: generateRandomIdentifier("req"), nombre: "Frabousco", nombrePlantilla: "Bienvenida", mensaje: "¡Hola! gracias por contactarnos" },
-        // { id: generateRandomIdentifier("req"),  nombre: "Frabousco", nombrePlantilla: "Recordatorio", mensaje: "No olvides asistir a la reunión de mañana." },
-        // { id: generateRandomIdentifier("req"), nombre: "Frabousco", nombrePlantilla: "Despedida", mensaje: "Te agradecemos tu compromiso con nosotros" }
-    ];
-
-    // Guardar datos en localStorage
-    function guardarDatos() {
-        localStorage.setItem('usuarios', JSON.stringify(usuarios));
-        localStorage.setItem('plantillas', JSON.stringify(plantillas));
-        localStorage.setItem('registros', JSON.stringify(registros));
-    }
+    const dataStorage = new DataStore();
 
     // Navegación entre secciones
     const navLinks = document.querySelectorAll('.nav-link');
@@ -53,6 +27,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderizarUsuarios() {
         const tbody = document.querySelector("#usuarios tbody");
         tbody.innerHTML = ""; 
+
+        const usuarios = dataStorage.getUsers();
     
         if (usuarios.length === 0) {
             tbody.innerHTML = `
@@ -85,6 +61,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const tbody = document.querySelector("#plantillas tbody");
         tbody.innerHTML = ""; 
 
+        const plantillas = dataStorage.getTemplates();
+
         if (plantillas.length === 0) {
             tbody.innerHTML = `
                 <tr>
@@ -112,6 +90,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderizarRegistros() {
         const tbody = document.getElementById("registrosTableBody");
         tbody.innerHTML = ""; 
+
+        const registros = dataStorage.getRecords();
 
         if (registros.length === 0) {
             tbody.innerHTML = `
@@ -165,15 +145,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Lógica para editar un usuario
     window.cargarDatosEditarRegistro = function(id) {
-        const registro = registros.find(r => r.id === id);
+        const registro = dataStorage.getRecord(id);
         if (registro) {
             // Cargar valores actuales en el modal
             document.getElementById("estadoEditar").value = registro.estado;
     
             // Guardar cambios al hacer clic en "Guardar Cambios"
             document.getElementById("guardarCambiosEditarRegistro").onclick = function() {
-                registro.estado = `${document.getElementById("estadoEditar").value}`;
-                guardarDatos();
+                dataStorage.editRecord(id, { estado: document.getElementById("estadoEditar").value });
                 renderizarRegistros();
                 bootstrap.Modal.getInstance(document.getElementById('editarModal')).hide();
             };
@@ -183,16 +162,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Lógica para eliminar un usuario
     window.eliminarUsuario = function(id, nombre) {
         if (confirm(`¿Estás seguro de que deseas eliminar al usuario "${nombre}"?`)) {
-            usuarios = usuarios.filter(u => u.id !== id);
-            guardarDatos();
+            dataStorage.removeUser(id);
             renderizarUsuarios();
         }
     };
 
     document.getElementById("borrarUsuarios").addEventListener("click", function() {
         if (confirm("¿Estás seguro de que deseas eliminar todos los usuarios?")) {
-            usuarios = [];
-            guardarDatos();
+            dataStorage.clearUsers();
             renderizarUsuarios();
         }
     });
@@ -212,15 +189,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Actualizar las opciones en los modales
         actualizarOpciones();
-        guardarDatos();
         renderizarUsuarios();
     });
 
     // Lógica para enviar mensaje
     window.cargarDatosEnviarMensaje = function(id) {
-        const usuario = usuarios.find(u => u.id === id);
+        const usuario = dataStorage.getUser(id);
         if (usuario) {
             // Cargar las plantillas en el select del modal
+            const plantillas = dataStorage.getTemplates();
             document.getElementById("plantillaMensaje").innerHTML = plantillas.map(p => `
                 <option value="${p.id}">${p.nombre}</option>
             `).join("");
@@ -237,24 +214,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 const numero = usuario.whatsapp;
     
                 // Actualizar el curso del usuario
-                usuario.curso = curso;
-                guardarDatos();
-    
-                // Verificar que el número esté en formato internacional
-                let numeroFormateado = numero.trim();
-                if (!numeroFormateado.startsWith("+")) {
-                    numeroFormateado = `+51${numeroFormateado}`;
-                }
+                dataStorage.editUser(id, { curso });
 
-                const plantillaSeleccionada = plantillas.find(p => p.id === plantillaId);
-    
-                // Codificar el mensaje
-                const mensajeCodificado = encodeURIComponent(plantillaSeleccionada?.mensaje ?? "");
+                const plantillaSeleccionada = dataStorage.getTemplate(plantillaId);
     
                 // Crear el enlace de WhatsApp
-                const enlaceWhatsApp = `https://wa.me/${numeroFormateado}?text=${mensajeCodificado}`;
+                const enlaceWhatsApp = createWhatsAppLink(numero, plantillaSeleccionada?.mensaje ?? "");
 
                 //verificar si el usuario ya tiene un registro con ese curso
+                const registros = dataStorage.getRecords();
                 const registroExistente = registros.find(r => r.curso === curso && r.usuarioId === usuario.id);
 
                 if (registroExistente) {
@@ -262,9 +230,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
                 }
 
-                // Crear Registro
-                registros.push({ 
-                    id: generateRandomIdentifier("req"), 
+                dataStorage.addRecord({
                     nombre: `${usuario.nombre} ${usuario.apellido}`,
                     usuarioId: usuario.id,
                     nombrePlantilla: plantillaSeleccionada?.nombre,
@@ -273,7 +239,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     estado: "Inicio" 
                 });
 
-                guardarDatos();
                 renderizarRegistros();
 
                 //Redirect to Registro Page
@@ -298,13 +263,14 @@ document.addEventListener('DOMContentLoaded', function() {
             Papa.parse(file, {
                 header: true,
                 complete: function(results) {
-                    usuarios = results.data.map(usuario => ({
-                        id: generateRandomIdentifier("user"),
-                        ...usuario,
-                        curso: usuario.curso ? `${usuario.curso}` : "No especificado",
-                        estado: usuario.estado ? `${usuario.estado}` : "No especificado"
-                    }));
-                    guardarDatos();
+                    results.data.forEach(usuario => {
+                        dataStorage.addUser({
+                            ...usuario,
+                            curso: usuario.curso ? `${usuario.curso}` : "No especificado",
+                            estado: usuario.estado ? `${usuario.estado}` : "No especificado"
+                        });
+                    });
+                    // guardarDatos();
                     renderizarUsuarios();
                 }
             });
@@ -313,15 +279,18 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     window.cargarDatosEditarPlantilla = function (id) {
-        const plantilla = plantillas.find(p => p.id === id);
+        const plantilla = dataStorage.getTemplate(id);
         if (plantilla) {
             document.getElementById("nombrePlantillaEditar").value = plantilla.nombre;
             document.getElementById("mensajePlantillaEditar").value = plantilla.mensaje;
 
             document.getElementById("guardarCambiosEditarPlantilla").onclick = function () {
-                plantilla.nombre = document.getElementById("nombrePlantillaEditar").value;
-                plantilla.mensaje = document.getElementById("mensajePlantillaEditar").value;
-                guardarDatos();
+
+                dataStorage.editTemplate(id, {
+                    nombre: document.getElementById("nombrePlantillaEditar").value,
+                    mensaje: document.getElementById("mensajePlantillaEditar").value
+                });
+
                 renderizarPlantillas();
                 bootstrap.Modal.getInstance(document.getElementById('editarPlantillaModal')).hide(); 
             };
@@ -330,8 +299,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.eliminarPlantilla = function (id, nombre) {
         if (confirm(`¿Estás seguro de que deseas eliminar la plantilla "${nombre}"?`)) {
-            plantillas = plantillas.filter(p => p.id !== id);
-            guardarDatos();
+
+            dataStorage.removeTemplate(id);
             renderizarPlantillas();
         }
     };
@@ -341,8 +310,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const mensaje = document.getElementById("mensajePlantilla").value;
 
         if (nombre && mensaje) {
-            plantillas.push({ id: generateRandomIdentifier("temp"), nombre, mensaje });
-            guardarDatos();
+            addTemplate({ nombre, mensaje });
+
             renderizarPlantillas();
             bootstrap.Modal.getInstance(document.getElementById('crearPlantillaModal')).hide(); 
         } else {
@@ -350,9 +319,164 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    function inicializarGraficos() {
+        // Datos de ejemplo (puedes reemplazarlos con datos reales desde tu backend)
+        const ttrData = {
+            labels: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
+            datasets: [{
+                label: 'Tiempo de Respuesta Promedio (minutos)',
+                data: [7, 5, 6, 4, 8, 6, 5], // Ejemplo de datos
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        };
+    
+        const messageUsageData = {
+            labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
+            datasets: [{
+                label: 'Tasa de Uso de Mensajes Predeterminados (%)',
+                data: [85, 90, 88, 92], // Ejemplo de datos
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        };
+    
+        const conversionRateData = {
+            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
+            datasets: [{
+                label: 'Tasa de Conversión de Leads (%)',
+                data: [15, 20, 18, 25, 22], // Ejemplo de datos
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        };
+    
+        const responseRateData = {
+            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
+            datasets: [{
+                label: 'Tasa de Respuesta de Leads (%)',
+                data: [60, 65, 70, 68, 75], // Ejemplo de datos
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            }]
+        };
+    
+        // Configuración común para los gráficos
+        const commonOptions = {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Valor'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Período'
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Estadísticas'
+                }
+            }
+        };
+    
+        // Inicializar gráficos
+        new Chart(document.getElementById('ttrChart'), {
+            type: 'line',
+            data: ttrData,
+            options: commonOptions
+        });
+    
+        new Chart(document.getElementById('messageUsageChart'), {
+            type: 'bar',
+            data: messageUsageData,
+            options: commonOptions
+        });
+    
+        new Chart(document.getElementById('conversionRateChart'), {
+            type: 'line',
+            data: conversionRateData,
+            options: commonOptions
+        });
+    
+        new Chart(document.getElementById('responseRateChart'), {
+            type: 'bar',
+            data: responseRateData,
+            options: commonOptions
+        });
+    }
+
+    function actualizarGraficos() {
+        // Obtener datos desde localStorage o una API
+        const ttrDataActualizado = [6, 4, 5, 3, 7, 5, 4]; // Ejemplo de datos actualizados
+        const messageUsageDataActualizado = [88, 92, 90, 94]; // Ejemplo de datos actualizados
+        const conversionRateDataActualizado = [18, 22, 20, 25, 23]; // Ejemplo de datos actualizados
+        const responseRateDataActualizado = [65, 70, 68, 72, 75]; // Ejemplo de datos actualizados
+    
+        // Actualizar los gráficos
+        ttrChart.data.datasets[0].data = ttrDataActualizado;
+        ttrChart.update();
+    
+        messageUsageChart.data.datasets[0].data = messageUsageDataActualizado;
+        messageUsageChart.update();
+    
+        conversionRateChart.data.datasets[0].data = conversionRateDataActualizado;
+        conversionRateChart.update();
+    
+        responseRateChart.data.datasets[0].data = responseRateDataActualizado;
+        responseRateChart.update();
+    }
+
+    // Dark Mode
+
+    const toggleDarkModeButton = document.getElementById('toggleDarkMode');
+    const body = document.body;
+
+    // Verificar si el usuario ya tiene una preferencia guardada
+    const isDarkMode = localStorage.getItem('darkMode') === 'true';
+
+    // Aplicar el modo oscuro si está activado
+    if (isDarkMode) {
+        body.classList.add('dark-mode');
+        toggleDarkModeButton.innerHTML = '<i class="bi bi-sun"></i> Modo Claro';
+    }
+
+    // Cambiar entre modo claro y oscuro
+    toggleDarkModeButton.addEventListener('click', function() {
+        body.classList.toggle('dark-mode');
+        const isDarkMode = body.classList.contains('dark-mode');
+
+        // Guardar la preferencia del usuario en localStorage
+        localStorage.setItem('darkMode', isDarkMode);
+
+        // Cambiar el ícono y el texto del botón
+        if (isDarkMode) {
+            toggleDarkModeButton.innerHTML = '<i class="bi bi-sun"></i> Modo Claro';
+        } else {
+            toggleDarkModeButton.innerHTML = '<i class="bi bi-moon"></i> Modo Oscuro';
+        }
+    });
+
+    
+    // Llamar a la función para actualizar los gráficos cada cierto tiempo
+    setInterval(actualizarGraficos, 5000); // Actualiza cada 5 segundos
+
     // Renderizar las tablas al cargar la página
     actualizarOpciones();
     renderizarUsuarios();
     renderizarPlantillas();
     renderizarRegistros();
+    // Inicializar gráficos del dashboard
+    inicializarGraficos();
 });
+

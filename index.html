@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>REPENSAR</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     
 </head>
@@ -31,6 +32,10 @@
                         <a class="nav-link" href="#" data-section="dashboard">Dashboard</a>
                     </li>
                 </ul>
+                <!-- Botón para cambiar el modo -->
+                <button id="toggleDarkMode" class="btn btn-outline-light ms-auto">
+                    <i class="bi bi-moon"></i> Modo Oscuro
+                </button>
             </div>
         </div>
     </nav>
@@ -42,6 +47,7 @@
             <h2 class="mb-4">Usuarios</h2>
             <div class="mb-3 d-flex justify-content-between">
                 <button class="btn btn-primary mb-3" id="cargarUsuarios">Cargar Usuarios</button>
+               
                 <button class="btn btn-danger mb-3" id="borrarUsuarios">Eliminar Usuarios</button>
             </div>
             
@@ -125,9 +131,47 @@
         </div>
 
         <!-- Sección de Dashboard -->
+        <!-- Sección de Dashboard -->
         <div id="dashboard" class="section">
             <h2 class="mb-4">Dashboard</h2>
-            <p>Aquí se mostrarán las estadísticas.</p>
+            <div class="row">
+                <!-- Gráfico 1: Tiempo de Respuesta Promedio (TTR) -->
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Tiempo de Respuesta Promedio (TTR)</h5>
+                            <canvas id="ttrChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <!-- Gráfico 2: Tasa de Uso de Mensajes Predeterminados -->
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Tasa de Uso de Mensajes Predeterminados</h5>
+                            <canvas id="messageUsageChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <!-- Gráfico 3: Tasa de Conversión de Leads -->
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Tasa de Conversión de Leads</h5>
+                            <canvas id="conversionRateChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <!-- Gráfico 4: Tasa de Respuesta de Leads -->
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Tasa de Respuesta de Leads</h5>
+                            <canvas id="responseRateChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -275,6 +319,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script src="app.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/config.js"></script>
+    <script src="/js/utils.js"></script>
+    <script src="/js/database.js"></script>
+    <script src="/js/app.js"></script>
 </body>
 </html>
