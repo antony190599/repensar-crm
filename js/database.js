@@ -1,4 +1,3 @@
-
 class DataStore {
     constructor() {
         this.data = {
@@ -147,10 +146,20 @@ class DataStore {
         return this.data.courses.find(c => c.name === name);
     }
 
-    
-
     addCourse(course) {
         this.data.courses.push({ ...course, id: generateRandomIdentifier("curso") });
+        this.saveToStorage();
+    }
+
+    editCourse(id, newCourse) {
+        const index = this.data.courses.findIndex(c => c.id === id);
+        const course = this.data.courses[index];
+        this.data.courses[index] = { ...course, ...newCourse };
+        this.saveToStorage();
+    }
+
+    removeCourse(id) {
+        this.data.courses = this.data.courses.filter(c => c.id !== id);
         this.saveToStorage();
     }
 
@@ -172,6 +181,18 @@ class DataStore {
 
     getStatusByName(name) {
         return this.data.statuses.find(c => c.name === name);
+    }
+
+    editStatus(id, newStatus) {
+        const index = this.data.statuses.findIndex(s => s.id === id);
+        const status = this.data.statuses[index];
+        this.data.statuses[index] = { ...status, ...newStatus };
+        this.saveToStorage();
+    }
+
+    removeStatus(id) {
+        this.data.statuses = this.data.statuses.filter(s => s.id !== id);
+        this.saveToStorage();
     }
 
 }

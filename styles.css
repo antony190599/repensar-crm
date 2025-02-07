@@ -9,6 +9,10 @@ body {
 .navbar-brand, .nav-link {
     color: #ffffff !important;
 }
+.navbar-brand img {
+    height: 2.5rem;
+    src: url('img/logo-repensar-blanco.svg');
+}
 .nav-link:hover {
     color: #ffc107 !important;
 }
@@ -31,6 +35,7 @@ body {
 .table td, .table th {
     padding: 12px;
     text-align: left;
+    vertical-align: middle;
 }
 .btn-primary {
     background-color: #0d8dfd;
@@ -70,7 +75,6 @@ body {
 .modal-footer {
     background-color: #f8f9fa;
 }
-
 
 /* Estilos para el modo oscuro */
 body.dark-mode {
@@ -114,6 +118,7 @@ body.dark-mode {
     color: #000000;
 }
 
+/* Estilos de los botones */
 .btn-success {
     --bs-btn-color: #9500ff;
     --bs-btn-bg: #ffffff00;
@@ -167,7 +172,6 @@ body.dark-mode {
     --bs-btn-disabled-color: #fff;
     --bs-btn-disabled-bg: #ff009d;
     --bs-btn-disabled-border-color: #ff009d;
-    
 }
 
 .table th {
@@ -218,6 +222,31 @@ body.dark-mode {
 
 .modal-header {
     background-color: #9500ff;
-
 }
 
+/* Nuevos estilos para alinear los botones */
+.table td .btn {
+    display: inline-flex;
+    margin-right: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+}
+
+.table td:last-child {
+    text-align: right;
+    white-space: nowrap;
+    width: 1%;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    height: 31px;
+}
+
+.table td {
+    vertical-align: middle;
+    padding: 0.75rem;
+}

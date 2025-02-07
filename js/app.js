@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', function() {
 
     const dataStorage = new DataStore();
@@ -20,6 +19,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    const logo = document.querySelector('.navbar-brand img');
+    if (logo) {
+        logo.src = 'img/logo-repensar-blanco.svg';
+    }
 
     // Función para renderizar la tabla de usuarios
     function renderizarUsuarios() {
@@ -108,10 +111,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td>${curso.name}</td>
-                <td>
-                    <!--
+                <td class="text-end">
+                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editarCursoModal" onclick="cargarDatosEditarCurso('${curso.id}')">Editar</button>
                     <button class="btn btn-danger btn-sm" onclick="eliminarCurso('${curso.id}', '${curso.name}')">Eliminar</button>
-                    -->
                 </td>
             `;
             tbody.appendChild(row);
@@ -137,10 +139,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td>${estado.name}</td>
-                <td>
-                    <!--
+                <td class="text-end">
+                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editarEstadoModal" onclick="cargarDatosEditarEstado('${estado.id}')">Editar</button>
                     <button class="btn btn-danger btn-sm" onclick="eliminarEstado('${estado.id}', '${estado.name}')">Eliminar</button>
-                    -->
                 </td>
             `;
             tbody.appendChild(row);
@@ -252,6 +253,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    document.getElementById("borrarRegistros").addEventListener("click", function() {
+        if (confirm("¿Estás seguro de que deseas eliminar todos los registros?")) {
+            dataStorage.data.records = [];
+            dataStorage.saveToStorage();
+            renderizarRegistros();
+        }
+    });
+
     // Lógica para crear una nueva etiqueta (curso o estado)
     document.getElementById("guardarCambiosCrear").addEventListener("click", function() {
         const nuevoCurso = document.getElementById("cursoCrear").value;
@@ -309,24 +318,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 dataStorage.editUser(id, { curso: cursoId });
 
                 const plantillaSeleccionada = dataStorage.getTemplate(plantillaId);
-    
-                // Crear el enlace de WhatsApp
-                const enlaceWhatsApp = createWhatsAppLink(numero, plantillaSeleccionada?.mensaje ?? "");
+                const mensajePersonalizado = document.getElementById("mensajePersonalizado").value;
 
-                //verificar si no seleccionaste una plantilla y no escribiste un mensaje personalizado
-                if (!plantillaId && !document.getElementById("mensajePersonalizado").value) {
+                // Crear el enlace de WhatsApp
+                const mensaje = plantillaSeleccionada?.mensaje ?? mensajePersonalizado;
+                const enlaceWhatsApp = createWhatsAppLink(numero, mensaje);
+
+                // Verificar si no seleccionaste una plantilla y no escribiste un mensaje personalizado
+                if (!plantillaId && !mensajePersonalizado) {
                     alert("Por favor, selecciona una plantilla o escribe un mensaje personalizado.");
                     return;
                 }
 
-
-                //verificar si el usuario ya tiene un registro con ese curso
+                // Verificar si el usuario ya tiene un registro con ese curso y tipo de mensaje
                 const registros = dataStorage.getRecords();
-                const registroExistente = registros.find(r => r.cursoId === cursoId && r.usuarioId === usuario.id);
+                const registroExistente = registros.find(r => r.cursoId === cursoId && r.usuarioId === usuario.id && r.nombrePlantilla === plantillaSeleccionada?.nombre);
 
                 if (registroExistente) {
-                    alert("Ya existe un registro para este usuario con el curso seleccionado");
-                    return;
+                    if (!confirm("Ya existe un registro para este usuario con el curso seleccionado y el mismo tipo de mensaje. ¿Deseas enviar el mensaje de todas formas?")) {
+                        return;
+                    }
                 }
 
                 dataStorage.addRecord({
@@ -336,7 +347,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     usuarioId: usuario.id,
                     nombrePlantilla: plantillaSeleccionada?.nombre ?? "Personalizado",
                     isMessagePredefined: plantillaId ? true : false,
-                    mensaje: plantillaSeleccionada?.mensaje ?? document.getElementById("mensajePersonalizado").value, 
+                    mensaje: mensaje, 
                     cursoName: dataStorage.getCourse(cursoId)?.name,
                     cursoId: cursoId,
                     estadoId: dataStorage.getStatusByName("Inicio")?.id,
@@ -346,17 +357,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 renderizarRegistros();
 
-                //Redirect to Registro Page
+                // Redirect to Registro Page
                 document.querySelector('[data-section="registros"]').click();
 
                 // Abrir el enlace en una nueva pestaña
                 window.open(enlaceWhatsApp, '_blank');
 
-                //close modal
+                // Close modal
                 bootstrap.Modal.getInstance(document.getElementById('enviarMensajeModal')).hide();
             };
         }
     };
+
     // Listen event when select change to disable textarea to send message
     document.getElementById("plantillaMensaje").addEventListener("change", function() {
         console.log("change");
@@ -489,6 +501,54 @@ document.addEventListener('DOMContentLoaded', function() {
 
     });
 
+    window.cargarDatosEditarCurso = function(id) {
+        const curso = dataStorage.getCourse(id);
+        if (curso) {
+            document.getElementById("nombreCursoEditar").value = curso.name;
+
+            document.getElementById("guardarCambiosEditarCurso").onclick = function() {
+                dataStorage.editCourse(id, {
+                    name: document.getElementById("nombreCursoEditar").value
+                });
+
+                renderizarCursos();
+                bootstrap.Modal.getInstance(document.getElementById('editarCursoModal')).hide();
+            };
+        }
+    };
+
+    window.eliminarCurso = function(id, name) {
+        if (confirm(`¿Estás seguro de que deseas eliminar el curso "${name}"?`)) {
+            dataStorage.removeCourse(id);
+            renderizarCursos();
+        }
+    };
+
+    window.cargarDatosEditarEstado = function(id) {
+        const estado = dataStorage.getStatus(id);
+        if (estado) {
+            document.getElementById("nombreEstadoEditar").value = estado.name;
+
+            document.getElementById("guardarCambiosEditarEstado").onclick = function() {
+                dataStorage.editStatus(id, {
+                    name: document.getElementById("nombreEstadoEditar").value
+                });
+
+                renderizarEstados();
+                bootstrap.Modal.getInstance(document.getElementById('editarEstadoModal')).hide();
+            };
+        }
+    };
+
+    window.eliminarEstado = function(id, name) {
+        if (confirm(`¿Estás seguro de que deseas eliminar el estado "${name}"?`)) {
+            dataStorage.removeStatus(id);
+            renderizarEstados();
+        }
+    };
+
+    let ttrChart, messageUsageChart, conversionRateChart, responseRateChart;
+
     function inicializarGraficos() {
         // Datos de ejemplo (puedes reemplazarlos con datos reales desde tu backend)
         const ttrData = {
@@ -561,25 +621,25 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     
         // Inicializar gráficos
-        new Chart(document.getElementById('ttrChart'), {
+        ttrChart = new Chart(document.getElementById('ttrChart'), {
             type: 'line',
             data: ttrData,
             options: commonOptions
         });
     
-        new Chart(document.getElementById('messageUsageChart'), {
+        messageUsageChart = new Chart(document.getElementById('messageUsageChart'), {
             type: 'bar',
             data: messageUsageData,
             options: commonOptions
         });
     
-        new Chart(document.getElementById('conversionRateChart'), {
+        conversionRateChart = new Chart(document.getElementById('conversionRateChart'), {
             type: 'line',
             data: conversionRateData,
             options: commonOptions
         });
     
-        new Chart(document.getElementById('responseRateChart'), {
+        responseRateChart = new Chart(document.getElementById('responseRateChart'), {
             type: 'bar',
             data: responseRateData,
             options: commonOptions
