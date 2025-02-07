@@ -45,7 +45,7 @@
         <!-- Sección de Usuarios -->
         <div id="usuarios" class="section active">
             <h2 class="mb-4">Usuarios</h2>
-            <div class="mb-3 d-flex justify-content-between">
+            <div class="mb-3 d-flex justify-content-between flex-wrap">
                 <div>
                     <button class="btn btn-primary mb-3" id="cargarUsuarios">Cargar Usuarios</button>
                     <!-- <button class="btn btn-info mb-3 ms-2" data-bs-toggle="modal" data-bs-target="#crearModal">Crear Etiqueta</button> -->
@@ -55,22 +55,24 @@
                 </div>
             </div>
             
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Contacto</th>
-                        <!-- <th>Apellido</th> -->
-                        <th>Whatsapp</th>
-                        <!-- <th>Correo</th> -->
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="5" class="text-center">No hay datos</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Contacto</th>
+                            <!-- <th>Apellido</th> -->
+                            <th>Whatsapp</th>
+                            <!-- <th>Correo</th> -->
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="5" class="text-center">No hay datos</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Sección de Plantillas -->
@@ -78,88 +80,95 @@
             <h2 class="mb-4">Plantillas</h2>
             <h4 class="mb-4">Plantillas de Mensajes</h4>
             <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#crearPlantillaModal">Crear Plantilla</button>
-            <table class="table" id="plantillasTable">
-                <thead>
-                    <tr>
-                        <th>Nombre de la plantilla</th>
-                        <th>Mensaje predefinido</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="3" class="text-center">No hay datos</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table" id="plantillasTable">
+                    <thead>
+                        <tr>
+                            <th>Nombre de la plantilla</th>
+                            <th>Mensaje predefinido</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="3" class="text-center">No hay datos</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
             <h4 class="mb-4 mt-5">Cursos</h4>
             <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#crearCursoModal">Crear Curso</button>
-            <table class="table" id="cursosTable">
-                <thead>
-                    <tr>
-                        <th>Curso</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="2" class="text-center">No hay datos</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table" id="cursosTable">
+                    <thead>
+                        <tr>
+                            <th>Curso</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="2" class="text-center">No hay datos</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
             <h4 class="mb-4 mt-5">Estados</h4>
             <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#crearEstadoModal">Crear Estado</button>
-            <table class="table" id="estadosTable">
-                <thead>
-                    <tr>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="2" class="text-center">No hay datos</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table" id="estadosTable">
+                    <thead>
+                        <tr>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="2" class="text-center">No hay datos</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Sección de Registros -->
         <div id="registros" class="section">
             <h2 class="mb-4">Registros</h2>
-            <div class="mb-3 d-flex justify-content-between">
+            <div class="mb-3 d-flex justify-content-between flex-wrap">
                 <div></div>
                 <div>
                     <button class="btn btn-danger mb-3" id="borrarRegistros">Eliminar Registros</button>
                 </div>
             </div>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Nombre de la plantilla</th>
-                        <th>Mensaje predefinido</th>
-                        <th>Curso</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="registrosTableBody">
-                    <!-- Las filas se llenarán dinámicamente desde JavaScript -->
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Nombre de la plantilla</th>
+                            <th>Mensaje predefinido</th>
+                            <th>Curso</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="registrosTableBody">
+                        <!-- Las filas se llenarán dinámicamente desde JavaScript -->
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <!-- Sección de Dashboard -->
         <!-- Sección de Dashboard -->
         <div id="dashboard" class="section">
             <h2 class="mb-4">Dashboard</h2>
             <div class="row">
                 <!-- Gráfico 1: Tiempo de Respuesta Promedio (TTR) -->
-                <div class="col-md-6">
-                    <div class="card mb-4">
+                <div class="col-md-6 mb-4">
+                    <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Tiempo de Respuesta Promedio (TTR)</h5>
                             <canvas id="ttrChart"></canvas>
@@ -167,8 +176,8 @@
                     </div>
                 </div>
                 <!-- Gráfico 2: Tasa de Uso de Mensajes Predeterminados -->
-                <div class="col-md-6">
-                    <div class="card mb-4">
+                <div class="col-md-6 mb-4">
+                    <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Tasa de Uso de Mensajes Predeterminados</h5>
                             <canvas id="messageUsageChart"></canvas>
@@ -176,8 +185,8 @@
                     </div>
                 </div>
                 <!-- Gráfico 3: Tasa de Conversión de Leads -->
-                <div class="col-md-6">
-                    <div class="card mb-4">
+                <div class="col-md-6 mb-4">
+                    <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Tasa de Conversión de Leads</h5>
                             <canvas id="conversionRateChart"></canvas>
@@ -185,8 +194,8 @@
                     </div>
                 </div>
                 <!-- Gráfico 4: Tasa de Respuesta de Leads -->
-                <div class="col-md-6">
-                    <div class="card mb-4">
+                <div class="col-md-6 mb-4">
+                    <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Tasa de Respuesta de Leads</h5>
                             <canvas id="responseRateChart"></canvas>

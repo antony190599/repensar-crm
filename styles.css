@@ -246,3 +246,27 @@ body.dark-mode {
     vertical-align: middle;
     padding: 0.75rem;
 }
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .navbar-brand img {
+        height: 2rem;
+    }
+
+    .table th, .table td {
+        padding: 8px;
+    }
+
+    .btn {
+        font-size: 0.875rem;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .modal-content {
+        padding: 1rem;
+    }
+
+    .modal-header, .modal-footer {
+        padding: 0.5rem 1rem;
+    }
+}
