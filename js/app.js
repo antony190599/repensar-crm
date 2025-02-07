@@ -30,11 +30,24 @@ document.addEventListener('DOMContentLoaded', function() {
         if (usuarios.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="5" class="text-center">No hay datos</td>
+                    <td colspan="7" class="text-center">No hay datos</td>
                 </tr>
             `;
             return;
         }
+    
+        // Crear encabezados dinámicamente
+        const headers = ["Contacto", "Whatsapp"];
+        if (usuarios.some(usuario => usuario.direccion)) headers.push("Dirección");
+        if (usuarios.some(usuario => usuario["telefono-secundario"])) headers.push("Teléfono Secundario");
+        headers.push("Acciones");
+    
+        const thead = document.querySelector("#usuarios thead");
+        thead.innerHTML = `
+            <tr>
+                ${headers.map(header => `<th>${header}</th>`).join('')}
+            </tr>
+        `;
     
         usuarios.forEach(usuario => {
             const row = document.createElement("tr");
@@ -46,10 +59,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </td>
                 <td>${usuario.whatsapp}</td>
+                ${usuario.direccion ? `<td>${usuario.direccion}</td>` : ""}
+                ${usuario["telefono-secundario"] ? `<td>${usuario["telefono-secundario"]}</td>` : ""}
                 <td>
-                    <!-- Botones de acción
-                    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#crearModal">Crear Etiqueta</button>
-                    -->
                     <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#enviarMensajeModal" onclick="cargarDatosEnviarMensaje('${usuario.id}')">Enviar Mensaje</button>
                     <button class="btn btn-danger btn-sm" onclick="eliminarUsuario('${usuario.id}', '${usuario.nombre}')">Eliminar</button>
                 </td>
@@ -385,19 +397,26 @@ document.addEventListener('DOMContentLoaded', function() {
         input.accept = '.csv';
         input.onchange = function(event) {
             const file = event.target.files[0];
-            Papa.parse(file, {
-                header: true,
-                complete: function(results) {
-                    results.data.forEach(usuario => {
-                        dataStorage.upsertUserByEmail(usuario.correo, {
-                            ...usuario,
-                            curso: usuario.curso ? `${usuario.curso}` : "No especificado",
-                            estado: usuario.estado ? `${usuario.estado}` : "No especificado"
+            if (file && file.type === "text/csv") {
+                Papa.parse(file, {
+                    header: true,
+                    complete: function(results) {
+                        results.data.forEach(usuario => {
+                            dataStorage.upsertUserByEmail(usuario.correo, {
+                                ...usuario,
+                                curso: usuario.curso ? `${usuario.curso}` : "No especificado",
+                                estado: usuario.estado ? `${usuario.estado}` : "No especificado"
+                            });
                         });
-                    });
-                    renderizarUsuarios();
-                }
-            });
+                        renderizarUsuarios();
+                    },
+                    error: function(error) {
+                        alert(`Error al procesar el archivo CSV: ${error.message}`);
+                    }
+                });
+            } else {
+                alert("Por favor, selecciona un archivo CSV válido.");
+            }
         };
         input.click();
     });
