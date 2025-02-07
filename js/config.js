@@ -4,13 +4,38 @@ const CONFIG_APP = {
     LOCAL_STORAGE_KEYS: {
         USERS: "usuarios",
         TEMPLATES: "plantillas",
-        RECORDS: "registros"
+        RECORDS: "registros",
+        COURSES: "cursos",
+        STATUSES: "estados"
     },
     DEFAULT_TEMPLATES: [
         { nombre: "Bienvenida", mensaje: "Hola, gracias por contactarnos" },
         { nombre: "Recordatorio", mensaje: "No olvides asistir a la reunión de mañana." },
         { nombre: "Despedida", mensaje: "Te agradecemos tu compromiso con nosotros" }
     ],
-    AVAILABLE_COURSES: ["HTML", "CSS", "JavaScript", "Java"],
-    AVAILABLE_STATES: ["Inicio", "En progreso", "Terminado"],
+    DEFAULT_COURSES: [
+        {
+            name: "HTML"
+        }, 
+        {
+            name: "CSS"
+        }, 
+        {
+            name: "JavaScript"
+        }, 
+        {
+            name: "Java"
+        }
+    ],
+    DEFAULT_STATUSES: [
+        {
+            name: "Inicio"
+        }, 
+        {
+            name: "En progreso"
+        }, 
+        {
+            name: "Terminado"
+        }
+    ],
 }

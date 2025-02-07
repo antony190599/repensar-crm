@@ -12,3 +12,7 @@ function createWhatsAppLink(number, message) {
     const formattedNumber = formatPhoneNumber(number);
     return `${CONFIG_APP.WHATSAPP_BASE_URL}${formattedNumber}?text=${encodeURIComponent(message)}`;
 }
+
+function convertSluggable(text) {
+    return text.toLowerCase().replace(/ /g, "_");
+}

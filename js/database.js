@@ -7,7 +7,15 @@ class DataStore {
                 ...t,
                 id: generateRandomIdentifier("temp")
             }))),
-            records: this.getFromStorage(CONFIG_APP.LOCAL_STORAGE_KEYS.RECORDS, [])
+            records: this.getFromStorage(CONFIG_APP.LOCAL_STORAGE_KEYS.RECORDS, []),
+            courses: this.getFromStorage(CONFIG_APP.LOCAL_STORAGE_KEYS.COURSES, CONFIG_APP.DEFAULT_COURSES.map(c => ({
+                ...c,
+                id: generateRandomIdentifier("curso")
+            }))),
+            statuses: this.getFromStorage(CONFIG_APP.LOCAL_STORAGE_KEYS.STATUSES, CONFIG_APP.DEFAULT_STATUSES.map(s => ({
+                ...s,
+                id: generateRandomIdentifier("status")
+            }))),
         };
     }
 
@@ -41,6 +49,16 @@ class DataStore {
         this.saveToStorage();
     }
 
+    upsertUserByEmail(correo, newUser) {
+        const index = this.data.users.findIndex(u => u.correo === correo);
+        if (index === -1) {
+            this.addUser(newUser);
+        } else {
+            this.data.users[index] = { ...this.data.users[index], ...newUser };
+            this.saveToStorage();
+        }
+    }
+
     removeUser(id) {
         this.data.users = this.data.users.filter(u => u.id !== id);
         this.saveToStorage();
@@ -62,6 +80,10 @@ class DataStore {
 
     getTemplates() {
         return this.data.templates;
+    }
+
+    getTemplatesWithEmptyOption() {
+        return [{ id: "", nombre: "No especificado" }, ...this.data.templates];
     }
 
     getTemplate(id) {
@@ -105,6 +127,51 @@ class DataStore {
         const record = this.data.records[index];
         this.data.records[index] = { ...record, ...newRecord };
         this.saveToStorage();
+    }
+
+    //CURSOS
+
+    getCourses() {
+        return this.data.courses;
+    }
+
+    getCoursesWithEmptyOption() {
+        return [{ id: "", name: "No especificado" }, ...this.data.courses];
+    }
+
+    getCourse(id) {
+        return this.data.courses.find(c => c.id === id);
+    }
+
+    getCourseByName(name) {
+        return this.data.courses.find(c => c.name === name);
+    }
+
+    
+
+    addCourse(course) {
+        this.data.courses.push({ ...course, id: generateRandomIdentifier("curso") });
+        this.saveToStorage();
+    }
+
+    //ESTADOS
+
+    getStatuses() {
+        return this.data.statuses;
+    }
+
+    getStatus(id) {
+        return this.data.statuses.find(s => s.id === id);
+    }
+
+    addStatus(status) {
+        console.log(status)
+        this.data.statuses.push({ ...status, id: generateRandomIdentifier("status") });
+        this.saveToStorage();
+    }
+
+    getStatusByName(name) {
+        return this.data.statuses.find(c => c.name === name);
     }
 
 }

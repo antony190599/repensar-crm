@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', function() {
 
     const dataStorage = new DataStore();
@@ -19,9 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Listas de cursos y estados disponibles
-    let cursosDisponibles = ["HTML", "CSS", "JavaScript", "Java"];
-    let estadosDisponibles = ["Inicio", "En progreso", "Terminado"];
 
     // Función para renderizar la tabla de usuarios
     function renderizarUsuarios() {
@@ -42,12 +40,17 @@ document.addEventListener('DOMContentLoaded', function() {
         usuarios.forEach(usuario => {
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td>${usuario.nombre}</td>
-                <td>${usuario.apellido}</td>
-                <td>${usuario.whatsapp}</td>
-                <td>${usuario.correo}</td>
                 <td>
+                    <div>
+                        <b>${usuario.nombre} ${usuario.apellido}</b>
+                        <div>${usuario.correo}</div>
+                    </div>
+                </td>
+                <td>${usuario.whatsapp}</td>
+                <td>
+                    <!-- Botones de acción
                     <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#crearModal">Crear Etiqueta</button>
+                    -->
                     <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#enviarMensajeModal" onclick="cargarDatosEnviarMensaje('${usuario.id}')">Enviar Mensaje</button>
                     <button class="btn btn-danger btn-sm" onclick="eliminarUsuario('${usuario.id}', '${usuario.nombre}')">Eliminar</button>
                 </td>
@@ -58,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para renderizar la tabla de plantillas
     function renderizarPlantillas() {
-        const tbody = document.querySelector("#plantillas tbody");
+        const tbody = document.querySelector("#plantillasTable tbody");
         tbody.innerHTML = ""; 
 
         const plantillas = dataStorage.getTemplates();
@@ -86,6 +89,65 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function renderizarCursos() {
+        const tbody = document.querySelector("#cursosTable tbody");
+        tbody.innerHTML = ""; 
+
+        const cursos = dataStorage.getCourses();
+
+        if (cursos.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="2" class="text-center">No hay datos</td>
+                </tr>
+            `;
+            return;
+        }
+
+        cursos.forEach(curso => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${curso.name}</td>
+                <td>
+                    <!--
+                    <button class="btn btn-danger btn-sm" onclick="eliminarCurso('${curso.id}', '${curso.name}')">Eliminar</button>
+                    -->
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    function renderizarEstados() {
+        const tbody = document.querySelector("#estadosTable tbody");
+        tbody.innerHTML = ""; 
+
+        const estados = dataStorage.getStatuses();
+
+        if (estados.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="2" class="text-center">No hay datos</td>
+                </tr>
+            `;
+            return;
+        }
+
+        estados.forEach(estado => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${estado.name}</td>
+                <td>
+                    <!--
+                    <button class="btn btn-danger btn-sm" onclick="eliminarEstado('${estado.id}', '${estado.name}')">Eliminar</button>
+                    -->
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+
     // Función para renderizar la tabla de registros
     function renderizarRegistros() {
         const tbody = document.getElementById("registrosTableBody");
@@ -105,10 +167,10 @@ document.addEventListener('DOMContentLoaded', function() {
         registros.forEach(registro => {
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td>${registro.nombre}</td>
+                <td>${registro.nombre_completo}</td>
                 <td>${registro.nombrePlantilla}</td>
                 <td>${registro.mensaje}</td>
-                <td>${registro.curso || "No especificado"}</td>
+                <td>${registro.cursoName || "No especificado"}</td>
                 <td>${registro.estado || "No especificado"}</td>
                 <td>
                     <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editarModal" onclick="cargarDatosEditarRegistro('${registro.id}')">Editar Etiqueta</button>
@@ -124,22 +186,29 @@ document.addEventListener('DOMContentLoaded', function() {
         const estadoEditar = document.getElementById("estadoEditar");
         const cursoCrear = document.getElementById("cursoCrear");
         const estadoCrear = document.getElementById("estadoCrear");
+        const cursoEditar = document.getElementById("cursoEditar");
 
         // Limpiar opciones actuales
         cursoMensaje.innerHTML = "";
         estadoEditar.innerHTML = "";
         cursoCrear.innerHTML = "";
         estadoCrear.innerHTML = "";
+        cursoEditar.innerHTML = "";
+
+        const cursosDisponibles = dataStorage.getCoursesWithEmptyOption();
+
+        const estadosDisponibles = dataStorage.getStatuses();
 
         // Agregar nuevas opciones
         cursosDisponibles.forEach(curso => {
-            cursoMensaje.innerHTML += `<option value="${curso}">${curso}</option>`;
-            cursoCrear.innerHTML += `<option value="${curso}">${curso}</option>`;
+            cursoMensaje.innerHTML += `<option value="${curso.id}">${curso.name}</option>`;
+            cursoCrear.innerHTML += `<option value="${curso.id}">${curso.name}</option>`;
+            cursoEditar.innerHTML += `<option value="${curso.id}">${curso.name}</option>`;
         });
 
         estadosDisponibles.forEach(estado => {
-            estadoEditar.innerHTML += `<option value="${estado}">${estado}</option>`;
-            estadoCrear.innerHTML += `<option value="${estado}">${estado}</option>`;
+            estadoEditar.innerHTML += `<option value="${estado.id}">${estado.name}</option>`;
+            estadoCrear.innerHTML += `<option value="${estado.id}">${estado.name}</option>`;
         });
     }
 
@@ -148,11 +217,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const registro = dataStorage.getRecord(id);
         if (registro) {
             // Cargar valores actuales en el modal
-            document.getElementById("estadoEditar").value = registro.estado;
+            document.getElementById("estadoEditar").value = registro.estadoId;
+            document.getElementById("cursoEditar").value = registro.cursoId;
     
             // Guardar cambios al hacer clic en "Guardar Cambios"
             document.getElementById("guardarCambiosEditarRegistro").onclick = function() {
-                dataStorage.editRecord(id, { estado: document.getElementById("estadoEditar").value });
+                const cursoId = document.getElementById("cursoEditar").value;
+                const estadoId = document.getElementById("estadoEditar").value
+                dataStorage.editRecord(id, { 
+                    estadoId: estadoId,
+                    estado: dataStorage.getStatus(estadoId)?.name,
+                    cursoName: dataStorage.getCourse(cursoId)?.name,
+                    cursoId: cursoId,
+                    updatedAt: new Date().toISOString()
+                });
                 renderizarRegistros();
                 bootstrap.Modal.getInstance(document.getElementById('editarModal')).hide();
             };
@@ -179,17 +257,29 @@ document.addEventListener('DOMContentLoaded', function() {
         const nuevoCurso = document.getElementById("cursoCrear").value;
         const nuevoEstado = document.getElementById("estadoCrear").value;
 
-        if (nuevoCurso && !cursosDisponibles.includes(nuevoCurso)) {
-            cursosDisponibles.push(nuevoCurso);
+        if (nuevoCurso && !dataStorage.getCourse(nuevoCurso)) {
+            dataStorage.addCourse({ name: nuevoCurso });
         }
 
-        if (nuevoEstado && !estadosDisponibles.includes(nuevoEstado)) {
-            estadosDisponibles.push(nuevoEstado);
+        if (nuevoEstado && !dataStorage.getStatus(nuevoEstado)) {
+            dataStorage.addStatus(nuevoEstado);
         }
 
         // Actualizar las opciones en los modales
         actualizarOpciones();
         renderizarUsuarios();
+        renderizarCursos();
+        renderizarEstados();
+
+        bootstrap.Modal.getInstance(document.getElementById('crearModal')).hide();
+    });
+
+    document.getElementById("enviarMensajeModal").addEventListener("show.bs.modal", function() {
+
+        document.getElementById("plantillaMensaje").value = "";
+        document.getElementById("mensajePersonalizado").value = "";
+        document.getElementById("mensajePersonalizado").disabled = false;
+        document.getElementById("cursoMensaje").value = "";
     });
 
     // Lógica para enviar mensaje
@@ -197,33 +287,42 @@ document.addEventListener('DOMContentLoaded', function() {
         const usuario = dataStorage.getUser(id);
         if (usuario) {
             // Cargar las plantillas en el select del modal
-            const plantillas = dataStorage.getTemplates();
+            const plantillas = dataStorage.getTemplatesWithEmptyOption();
+            const cursosDisponibles = dataStorage.getCoursesWithEmptyOption();
+
             document.getElementById("plantillaMensaje").innerHTML = plantillas.map(p => `
                 <option value="${p.id}">${p.nombre}</option>
             `).join("");
     
             // Cargar los cursos disponibles en el select del modal
             document.getElementById("cursoMensaje").innerHTML = cursosDisponibles.map(curso => `
-                <option value="${curso}">${curso}</option>
+                <option value="${curso.id}">${curso.name}</option>
             `).join("");
     
             // Configurar el botón "Enviar Mensaje"
             document.getElementById("enviarMensaje").onclick = function() {
                 const plantillaId = document.getElementById("plantillaMensaje").value;
-                const curso = document.getElementById("cursoMensaje").value;
+                const cursoId = document.getElementById("cursoMensaje").value;
                 const numero = usuario.whatsapp;
     
                 // Actualizar el curso del usuario
-                dataStorage.editUser(id, { curso });
+                dataStorage.editUser(id, { curso: cursoId });
 
                 const plantillaSeleccionada = dataStorage.getTemplate(plantillaId);
     
                 // Crear el enlace de WhatsApp
                 const enlaceWhatsApp = createWhatsAppLink(numero, plantillaSeleccionada?.mensaje ?? "");
 
+                //verificar si no seleccionaste una plantilla y no escribiste un mensaje personalizado
+                if (!plantillaId && !document.getElementById("mensajePersonalizado").value) {
+                    alert("Por favor, selecciona una plantilla o escribe un mensaje personalizado.");
+                    return;
+                }
+
+
                 //verificar si el usuario ya tiene un registro con ese curso
                 const registros = dataStorage.getRecords();
-                const registroExistente = registros.find(r => r.curso === curso && r.usuarioId === usuario.id);
+                const registroExistente = registros.find(r => r.cursoId === cursoId && r.usuarioId === usuario.id);
 
                 if (registroExistente) {
                     alert("Ya existe un registro para este usuario con el curso seleccionado");
@@ -231,12 +330,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 dataStorage.addRecord({
-                    nombre: `${usuario.nombre} ${usuario.apellido}`,
+                    nombre_completo: `${usuario.nombre} ${usuario.apellido}`,
+                    telefono: usuario.whatsapp,
+                    correo: usuario.correo,
                     usuarioId: usuario.id,
-                    nombrePlantilla: plantillaSeleccionada?.nombre,
-                    mensaje: plantillaSeleccionada?.mensaje, 
-                    curso, 
-                    estado: "Inicio" 
+                    nombrePlantilla: plantillaSeleccionada?.nombre ?? "Personalizado",
+                    isMessagePredefined: plantillaId ? true : false,
+                    mensaje: plantillaSeleccionada?.mensaje ?? document.getElementById("mensajePersonalizado").value, 
+                    cursoName: dataStorage.getCourse(cursoId)?.name,
+                    cursoId: cursoId,
+                    estadoId: dataStorage.getStatusByName("Inicio")?.id,
+                    estado: "Inicio",
+                    createdAt: new Date().toISOString()
                 });
 
                 renderizarRegistros();
@@ -252,6 +357,18 @@ document.addEventListener('DOMContentLoaded', function() {
             };
         }
     };
+    // Listen event when select change to disable textarea to send message
+    document.getElementById("plantillaMensaje").addEventListener("change", function() {
+        console.log("change");
+        const plantillaId = document.getElementById("plantillaMensaje").value;
+
+        if (plantillaId != "") {
+            document.getElementById("mensajePersonalizado").disabled = true;
+        } else {
+            document.getElementById("mensajePersonalizado").disabled = false;
+        }
+        
+    });
 
     // Lógica para cargar usuarios desde un archivo CSV usando Papa Parse
     document.getElementById("cargarUsuarios").addEventListener("click", function() {
@@ -264,13 +381,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 header: true,
                 complete: function(results) {
                     results.data.forEach(usuario => {
-                        dataStorage.addUser({
+                        dataStorage.upsertUserByEmail(usuario.correo, {
                             ...usuario,
                             curso: usuario.curso ? `${usuario.curso}` : "No especificado",
                             estado: usuario.estado ? `${usuario.estado}` : "No especificado"
                         });
                     });
-                    // guardarDatos();
                     renderizarUsuarios();
                 }
             });
@@ -310,13 +426,67 @@ document.addEventListener('DOMContentLoaded', function() {
         const mensaje = document.getElementById("mensajePlantilla").value;
 
         if (nombre && mensaje) {
-            addTemplate({ nombre, mensaje });
+            dataStorage.addTemplate({ nombre, mensaje });
 
             renderizarPlantillas();
             bootstrap.Modal.getInstance(document.getElementById('crearPlantillaModal')).hide(); 
         } else {
             alert("Por favor, completa todos los campos.");
         }
+    });
+
+    document.getElementById("crearCursoModal").addEventListener("show.bs.modal", function() {
+        document.getElementById("nombreCurso").value = "";
+    });
+
+    document.getElementById("crearEstadoModal").addEventListener("show.bs.modal", function() {
+        document.getElementById("nombreEstado").value = "";
+    });
+
+    document.getElementById("guardarCurso").addEventListener("click", function() {
+        const nombre = document.getElementById("nombreCurso").value;
+
+        if (nombre) {
+            //validar nombre
+            const cursoExistente = dataStorage.getCourseByName(nombre);
+
+            if (cursoExistente) {
+                alert("Ya existe un curso con ese nombre");
+                return;
+            }
+
+
+            dataStorage.addCourse({ name: nombre });
+
+            renderizarCursos();
+            bootstrap.Modal.getInstance(document.getElementById('crearCursoModal')).hide(); 
+        } else {
+            alert("Por favor, completa todos los campos.");
+        }
+
+    });
+
+    document.getElementById("guardarEstado").addEventListener("click", function() {
+        const nombre = document.getElementById("nombreEstado").value;
+
+        if (nombre) {
+
+            //validar nombre
+            const estadoExistente = dataStorage.getStatusByName(nombre);
+
+            if (estadoExistente) {
+                alert("Ya existe un estado con ese nombre");
+                return;
+            }
+
+            dataStorage.addStatus({ name: nombre});
+
+            renderizarEstados();
+            bootstrap.Modal.getInstance(document.getElementById('crearEstadoModal')).hide(); 
+        } else {
+            alert("Por favor, completa todos los campos.");
+        }
+
     });
 
     function inicializarGraficos() {
@@ -476,6 +646,8 @@ document.addEventListener('DOMContentLoaded', function() {
     renderizarUsuarios();
     renderizarPlantillas();
     renderizarRegistros();
+    renderizarCursos();
+    renderizarEstados();
     // Inicializar gráficos del dashboard
     inicializarGraficos();
 });
