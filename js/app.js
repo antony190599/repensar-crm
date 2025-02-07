@@ -19,10 +19,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    const logo = document.querySelector('.navbar-brand img');
-    if (logo) {
-        logo.src = 'img/logo-repensar-blanco.svg';
-    }
 
     // Función para renderizar la tabla de usuarios
     function renderizarUsuarios() {

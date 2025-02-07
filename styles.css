@@ -9,10 +9,6 @@ body {
 .navbar-brand, .nav-link {
     color: #ffffff !important;
 }
-.navbar-brand img {
-    height: 2.5rem;
-    src: url('img/logo-repensar-blanco.svg');
-}
 .nav-link:hover {
     color: #ffc107 !important;
 }
