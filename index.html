@@ -47,11 +47,11 @@
             <h2 class="mb-4">Usuarios</h2>
             <div class="mb-3 d-flex justify-content-between flex-wrap">
                 <div>
-                    <button class="btn btn-primary mb-3" id="cargarUsuarios">Cargar Usuarios</button>
+                    <button class="btn btn-primary mb-3" id="cargarUsuarios" data-section="usuarios">Cargar Usuarios</button>
                     <!-- <button class="btn btn-info mb-3 ms-2" data-bs-toggle="modal" data-bs-target="#crearModal">Crear Etiqueta</button> -->
                 </div>
                 <div>
-                    <button class="btn btn-danger mb-3" id="borrarUsuarios">Eliminar Usuarios</button>
+                    <button class="btn btn-danger mb-3" id="borrarUsuarios" data-section="usuarios">Eliminar Usuarios</button>
                 </div>
             </div>
             
@@ -73,7 +73,7 @@
         <div id="plantillas" class="section">
             <h2 class="mb-4">Plantillas</h2>
             <h4 class="mb-4">Plantillas de Mensajes</h4>
-            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#crearPlantillaModal">Crear Plantilla</button>
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#crearPlantillaModal" data-section="plantillas">Crear Plantilla</button>
             <div class="table-responsive">
                 <table class="table" id="plantillasTable">
                     <thead>
@@ -92,7 +92,7 @@
             </div>
 
             <h4 class="mb-4 mt-5">Cursos</h4>
-            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#crearCursoModal">Crear Curso</button>
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#crearCursoModal" data-section="plantillas">Crear Curso</button>
             <div class="table-responsive">
                 <table class="table" id="cursosTable">
                     <thead>
@@ -110,7 +110,7 @@
             </div>
 
             <h4 class="mb-4 mt-5">Estados</h4>
-            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#crearEstadoModal">Crear Estado</button>
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#crearEstadoModal" data-section="plantillas">Crear Estado</button>
             <div class="table-responsive">
                 <table class="table" id="estadosTable">
                     <thead>
@@ -134,7 +134,7 @@
             <div class="mb-3 d-flex justify-content-between flex-wrap">
                 <div></div>
                 <div>
-                    <button class="btn btn-danger mb-3" id="borrarRegistros">Eliminar Registros</button>
+                    <button class="btn btn-danger mb-3" id="borrarRegistros" data-section="registros">Eliminar Registros</button>
                 </div>
             </div>
             <div class="table-responsive">

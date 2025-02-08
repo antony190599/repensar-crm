@@ -6,16 +6,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const navLinks = document.querySelectorAll('.nav-link');
     const sections = document.querySelectorAll('.section');
 
+    function navigateToSection(targetSection) {
+        sections.forEach(section => {
+            section.classList.remove('active');
+            if (section.id === targetSection) {
+                section.classList.add('active');
+            }
+        });
+    }
+
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             const targetSection = this.getAttribute('data-section');
-            sections.forEach(section => {
-                section.classList.remove('active');
-                if (section.id === targetSection) {
-                    section.classList.add('active');
-                }
-            });
+            navigateToSection(targetSection);
         });
     });
 
@@ -364,11 +368,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 renderizarRegistros();
-
-                // Redirect to Registro Page
-                document.querySelector('[data-section="registros"]').click();
-
-                // Abrir el enlace en una nueva pestaña
+                navigateToSection('registros');
                 window.open(enlaceWhatsApp, '_blank');
 
                 // Close modal
@@ -565,65 +565,63 @@ document.addEventListener('DOMContentLoaded', function() {
     let ttrChart, messageUsageChart, conversionRateChart, responseRateChart;
 
     function inicializarGraficos() {
-        // Datos de ejemplo (puedes reemplazarlos con datos reales desde tu backend)
         const ttrData = {
-            labels: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
+            labels: ['Bienvenida', 'Recordatorio', 'Despedida'],
             datasets: [{
-                label: 'Tiempo de Respuesta Promedio (minutos)',
-                data: [7, 5, 6, 4, 8, 6, 5], // Ejemplo de datos
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
+                label: 'Tiempo entre Mensajes (minutos)',
+                data: [0, 0, 0],
+                backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)'],
+                borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)'],
                 borderWidth: 1
             }]
         };
-    
+
         const messageUsageData = {
-            labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
+            labels: ['Bienvenida', 'Recordatorio', 'Despedida'],
             datasets: [{
-                label: 'Tasa de Uso de Mensajes Predeterminados (%)',
-                data: [85, 90, 88, 92], // Ejemplo de datos
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
+                label: 'Mensajes Enviados',
+                data: [0, 0, 0],
+                backgroundColor: ['rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+                borderColor: ['rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)', 'rgba(255, 99, 132, 1)'],
                 borderWidth: 1
             }]
         };
-    
+
         const conversionRateData = {
-            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
+            labels: [],
             datasets: [{
-                label: 'Tasa de Conversión de Leads (%)',
-                data: [15, 20, 18, 25, 22], // Ejemplo de datos
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
+                label: 'Usuarios por Curso',
+                data: [],
+                backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)'],
+                borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'],
                 borderWidth: 1
             }]
         };
-    
+
         const responseRateData = {
-            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
+            labels: ['Inicio', 'En progreso', 'Terminado'],
             datasets: [{
-                label: 'Tasa de Respuesta de Leads (%)',
-                data: [60, 65, 70, 68, 75], // Ejemplo de datos
-                backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                borderColor: 'rgba(153, 102, 255, 1)',
+                label: 'Registros por Estado',
+                data: [0, 0, 0],
+                backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)'],
+                borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)'],
                 borderWidth: 1
             }]
         };
-    
-        // Configuración común para los gráficos
+
         const commonOptions = {
             scales: {
                 y: {
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Valor'
+                        text: 'Cantidad'
                     }
                 },
                 x: {
                     title: {
                         display: true,
-                        text: 'Período'
+                        text: 'Categoría'
                     }
                 }
             },
@@ -634,26 +632,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         };
-    
-        // Inicializar gráficos
+
         ttrChart = new Chart(document.getElementById('ttrChart'), {
-            type: 'line',
+            type: 'bar',
             data: ttrData,
             options: commonOptions
         });
-    
+
         messageUsageChart = new Chart(document.getElementById('messageUsageChart'), {
             type: 'bar',
             data: messageUsageData,
             options: commonOptions
         });
-    
+
         conversionRateChart = new Chart(document.getElementById('conversionRateChart'), {
-            type: 'line',
+            type: 'bar',
             data: conversionRateData,
             options: commonOptions
         });
-    
+
         responseRateChart = new Chart(document.getElementById('responseRateChart'), {
             type: 'bar',
             data: responseRateData,
@@ -662,23 +659,37 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function actualizarGraficos() {
-        // Obtener datos desde localStorage o una API
-        const ttrDataActualizado = [6, 4, 5, 3, 7, 5, 4]; // Ejemplo de datos actualizados
-        const messageUsageDataActualizado = [88, 92, 90, 94]; // Ejemplo de datos actualizados
-        const conversionRateDataActualizado = [18, 22, 20, 25, 23]; // Ejemplo de datos actualizados
-        const responseRateDataActualizado = [65, 70, 68, 72, 75]; // Ejemplo de datos actualizados
-    
-        // Actualizar los gráficos
-        ttrChart.data.datasets[0].data = ttrDataActualizado;
+        const registros = dataStorage.getRecords();
+        const usuarios = dataStorage.getUsers();
+
+        const estados = ['Inicio', 'En progreso', 'Terminado'];
+        const cursos = dataStorage.getCourses().map(curso => curso.name);
+        const mensajes = ['Bienvenida', 'Recordatorio', 'Despedida'];
+
+        const tiempoEntreMensajes = mensajes.map(mensaje => {
+            const registrosFiltrados = registros.filter(r => r.nombrePlantilla === mensaje);
+            if (registrosFiltrados.length < 2) return 0;
+            const tiempos = registrosFiltrados.map(r => new Date(r.createdAt).getTime());
+            tiempos.sort((a, b) => a - b);
+            const diferencias = tiempos.slice(1).map((t, i) => (t - tiempos[i]) / 60000); // Diferencias en minutos
+            return diferencias.reduce((a, b) => a + b, 0) / diferencias.length;
+        });
+
+        const usuariosPorCurso = cursos.map(curso => registros.filter(r => r.cursoName === curso).length);
+        const registrosPorEstado = estados.map(estado => registros.filter(r => r.estado === estado).length);
+        const mensajesEnviados = mensajes.map(mensaje => registros.filter(r => r.nombrePlantilla === mensaje).length);
+
+        ttrChart.data.datasets[0].data = tiempoEntreMensajes;
         ttrChart.update();
-    
-        messageUsageChart.data.datasets[0].data = messageUsageDataActualizado;
+
+        messageUsageChart.data.datasets[0].data = mensajesEnviados;
         messageUsageChart.update();
-    
-        conversionRateChart.data.datasets[0].data = conversionRateDataActualizado;
+
+        conversionRateChart.data.labels = cursos;
+        conversionRateChart.data.datasets[0].data = usuariosPorCurso;
         conversionRateChart.update();
-    
-        responseRateChart.data.datasets[0].data = responseRateDataActualizado;
+
+        responseRateChart.data.datasets[0].data = registrosPorEstado;
         responseRateChart.update();
     }
 
@@ -708,7 +719,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isDarkMode) {
             toggleDarkModeButton.innerHTML = '<i class="bi bi-sun"></i> Modo Claro';
         } else {
-            toggleDarkModeButton.innerHTML = '<i class="bi bi-moon"></i> Modo Oscuro';
+            toggleDarkModeButton.innerHTML = '<i la="bi bi-moon"></i> Modo Oscuro';
         }
     });
 
