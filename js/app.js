@@ -402,11 +402,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     header: true,
                     complete: function(results) {
                         results.data.forEach(usuario => {
-                            dataStorage.upsertUserByEmail(usuario.correo, {
-                                ...usuario,
-                                curso: usuario.curso ? `${usuario.curso}` : "No especificado",
-                                estado: usuario.estado ? `${usuario.estado}` : "No especificado"
-                            });
+                            if (usuario.nombre) {
+                                dataStorage.upsertUserByEmail(usuario.correo, {
+                                    ...usuario,
+                                    curso: usuario.curso ? `${usuario.curso}` : "No especificado",
+                                    estado: usuario.estado ? `${usuario.estado}` : "No especificado"
+                                });
+                            }
+                            
                         });
                         renderizarUsuarios();
                     },
@@ -723,7 +726,61 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    
+    // Manejar el botón de crear usuario
+    document.getElementById("crearUsuario").addEventListener("click", function() {
+        // Limpiar los campos del formulario
+        document.getElementById("nombreUsuario").value = "";
+        document.getElementById("apellidoUsuario").value = "";
+        document.getElementById("correoUsuario").value = "";
+        document.getElementById("whatsappUsuario").value = "";
+        
+        
+        // Mostrar el modal
+        const crearUsuarioModal = new bootstrap.Modal(document.getElementById('crearUsuarioModal'));
+        crearUsuarioModal.show();
+    });
+
+    // Guardar el nuevo usuario
+    document.getElementById("guardarUsuario").addEventListener("click", function() {
+        const nombre = document.getElementById("nombreUsuario").value;
+        const apellido = document.getElementById("apellidoUsuario").value;
+        const correo = document.getElementById("correoUsuario").value;
+        const whatsapp = document.getElementById("whatsappUsuario").value;
+        
+        // Validar campos requeridos
+        if (!nombre || !apellido || !whatsapp) {
+            alert("Por favor, completa los campos obligatorios.");
+            return;
+        }
+        
+        if (correo) {
+            // Validar formato de correo electrónico
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(correo)) {
+                alert("Por favor, ingresa un correo electrónico válido.");
+                return;
+            }
+        }
+        
+        
+        // Crear el objeto usuario
+        const nuevoUsuario = {
+            nombre,
+            apellido,
+            correo,
+            whatsapp
+        };
+        
+        // Guardar el usuario
+        dataStorage.addUser(nuevoUsuario);
+        
+        // Actualizar la tabla de usuarios
+        renderizarUsuarios();
+        
+        // Cerrar el modal
+        bootstrap.Modal.getInstance(document.getElementById('crearUsuarioModal')).hide();
+    });
+
     // Llamar a la función para actualizar los gráficos cada cierto tiempo
     setInterval(actualizarGraficos, 5000); // Actualiza cada 5 segundos
 

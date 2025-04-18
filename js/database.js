@@ -36,7 +36,10 @@ class DataStore {
     //USERS
 
     getUsers() {
-        return this.data.users;
+        return this.data.users.map(user => ({
+            ...user,
+            cursoName: user.curso ? this.getCourse(user.curso)?.name || "No especificado" : "No especificado"
+        }));
     }
 
     getUser(id) {
